@@ -14,7 +14,7 @@ openmm_system = OpenMMEngine(init_openmm=True, topology_format='AMBER', top_file
 
 # Create ParaMol System
 # Note that number of cpus was set to 4
-aspirin = ParaMolSystem(name="aspirin", engine=openmm_system, n_atoms=21, n_cpus=4)
+aspirin = ParaMolSystem(name="aspirin_gpu", engine=openmm_system, n_atoms=21, n_cpus=4)
 
 # Create ParaMol's force field representation and ask to parametrize bonds, angles and torsions
 aspirin.force_field.create_force_field(opt_bonds=True, opt_angles=True, opt_torsions=True)
@@ -41,7 +41,7 @@ amber_symmetrizer.get_symmetries(aspirin.force_field)
 amber_symmetrizer.symmetrize_force_field(aspirin.force_field)
 
 # Write symmetrized Force-Field to file
-aspirin.force_field.write_ff_file("aspirin_sym.ff")
+aspirin.force_field.write_ff_file("aspirin_gpu_sym.ff")
 # --------------------------------------------------------- #
 #                       Parametrization                     #
 # --------------------------------------------------------- #
@@ -49,11 +49,11 @@ parametrization = Parametrization()
 systems, parameter_space, objective_function, optimizer = parametrization.run_task(paramol_settings, [aspirin])
 
 # Write ParaMol Force Field file with final parameters
-aspirin.force_field.write_ff_file("aspirin_symm_opt.ff")
+aspirin.force_field.write_ff_file("aspirin_gpu_symm_opt.ff")
 
 # Update AMBER symmetrizer with new parameters
 amber_symmetrizer.update_term_types_parameters(parameter_space.optimizable_parameters)
 
 # Write AMBER topology file (.prmtop)
-amber_symmetrizer.save("aspirin_opt.prmtop")
-amber_symmetrizer.save_frcmod("aspirin_opt.frcmod")
+amber_symmetrizer.save("aspirin_gpu_opt.prmtop")
+amber_symmetrizer.save_frcmod("aspirin_gpu_opt.frcmod")
